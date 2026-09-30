@@ -30,3 +30,5 @@ Configure `NEXT_PUBLIC_APP_URL` com o domínio público antes de gerar os QRs de
 
 ## Cobrança
 A estrutura de planos já existe no banco. Mercado Pago/Stripe deve ser ligado em uma etapa posterior via checkout + webhook para atualizar `profiles.plan`. Nenhuma cobrança fictícia foi ativada nesta versão.
+
+Projeto preparado para produção.
