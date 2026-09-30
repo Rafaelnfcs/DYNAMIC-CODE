@@ -1,0 +1,2 @@
+import {NextResponse} from 'next/server';import {currentProfile} from '../../../lib/auth';import {adminDb} from '../../../lib/supabase/server';
+export async function GET(req){const p=await currentProfile(req);if(!p)return NextResponse.json({error:'Unauthorized'},{status:401});const {data:plan}=await adminDb().from('plans').select('*').eq('id',p.plan).single();return NextResponse.json({...p,plan_details:plan})}
