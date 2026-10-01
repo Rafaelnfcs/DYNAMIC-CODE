@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { browserDb } from '../lib/supabase/client';
+import JSZip from 'jszip';
 
 export default function Home() {
   const [items, setItems] = useState([]);
@@ -137,6 +138,43 @@ export default function Home() {
       console.error(error);
     }
   }
+
+  async function downloadAllQrs() {
+  if (!items.length) {
+    alert('Nenhum QR Code para baixar.');
+    return;
+  }
+
+  try {
+    const zip = new JSZip();
+
+    for (const item of items) {
+      const response = await api('/api/qr?slug=' + item.slug);
+      const blob = await response.blob();
+
+      const nome = (item.name || item.slug)
+        .replace(/[\\/:*?"<>|]/g, '-')
+        .trim();
+
+      zip.file(nome + '.png', blob);
+    }
+
+    const zipBlob = await zip.generateAsync({ type: 'blob' });
+
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(zipBlob);
+    link.download = 'meus-qr-codes.zip';
+
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    URL.revokeObjectURL(link.href);
+  } catch (error) {
+    alert('Não foi possível baixar todos os QR Codes.');
+    console.error(error);
+  }
+}
 
   async function logout() {
     await browserDb().auth.signOut();
@@ -294,7 +332,15 @@ export default function Home() {
               <h2>Meus QR Codes</h2>
               <p>{items.length} códigos cadastrados</p>
             </div>
-
+<div className="panelActions">
+  <button
+    className="secondaryButton"
+    onClick={downloadAllQrs}
+    disabled={!items.length}
+  >
+    ↓ Baixar todos (.ZIP)
+  </button>
+  
             <button className="secondaryButton" onClick={load}>
               ↻ Atualizar
             </button>
