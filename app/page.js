@@ -408,13 +408,13 @@ export default function Home() {
                       title={x.active ? 'Desativar' : 'Ativar'}
                     >
                       {x.active ? 'Ⅱ' : '▶'}
-                    </button>
-                  </div>
-                </div>
-              ))}
+                 </button>
+              </div>
             </div>
-          )}
-        </section>
-    </main>
-  );
+          ))}
+        </div>
+      )}
+    </section>
+  </main>
+);
 }
